@@ -23,11 +23,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         private val KEY_INDEX="index"
+        private val KEY_CORRECTAS="respuetasCorrectas"
     }
 
     val TAG="Life"
 
     var mCurrentIndex:Int = 0
+    var  respuestasOk:Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         /*el onCreate se llama para instanciar el activity*/
@@ -40,7 +42,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         /*Actualizamos el valor de mCurrentIndex, para la persistencia de datos*/
-        if (savedInstanceState!=null) mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0)
+        if (savedInstanceState!=null){
+            mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0)
+            respuestasOk=savedInstanceState.getDouble(KEY_CORRECTAS)
+        }
 
         /*Setemos el widged con su id, debemos importar este xml para poder hacer referencia a sus elementos por el id*/
         question_text_view.text="Esta debe ser una pregunta"
@@ -54,9 +59,16 @@ class MainActivity : AppCompatActivity() {
         //creamos un array de objetos Question
 
         btn_next.setOnClickListener {
-            mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
-           updateQuestion()
-            habilitarBotones()
+
+            if (mCurrentIndex==5){
+                //calcular el promedio
+                calcularPromedio()
+                Toast.makeText(this@MainActivity,"Tu puntaje porcentual es ${calcularPromedio()}%", Toast.LENGTH_SHORT).show()
+            }else{
+                mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
+                updateQuestion()
+                habilitarBotones()
+            }
         }
         updateQuestion()
 
@@ -66,46 +78,22 @@ class MainActivity : AppCompatActivity() {
             habilitarBotones()
         }
 
-
         //**KOTLIN**
         //implementamos un listener para nuestro boton true
         btn_true.setOnClickListener {
             checkAnswer(true)
             //btn_false.isClickable=false
-
         }
         btn_false.setOnClickListener {
             checkAnswer(false)
             //btn_true.isClickable=false
         }
-
     }
 
-   /* override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart called")
-    }
+    private fun calcularPromedio() :Double{
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG,"estoy en onResume")
+        return (respuestasOk*100)/6
     }
-
-    override fun onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() called")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop() called")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG,"onDestroy called")
-    }
-*/
 
     fun habilitarBotones(){
         btn_false.isEnabled=true
@@ -135,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG,  "onSaveInstanceState")
         //guardamos este dato para la persistencia
         savedInstanceState?.putInt(KEY_INDEX,mCurrentIndex)
-
+        savedInstanceState?.putDouble(KEY_CORRECTAS,respuestasOk)
     }
 
 
@@ -149,12 +137,39 @@ class MainActivity : AppCompatActivity() {
         inhabilitaBoton(userPressedTrue)
 
         if (userPressedTrue == answerIsTrue){
+            respuestasOk++
             messageResId = R.string.correct_toast
         }
         else{
             messageResId=R.string.incorrect_toast
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-
     }
+
+
+    /* override fun onStart() {
+         super.onStart()
+         Log.d(TAG, "onStart called")
+     }
+
+     override fun onResume() {
+         super.onResume()
+         Log.d(TAG,"estoy en onResume")
+     }
+
+     override fun onPause(){
+         super.onPause();
+         Log.d(TAG, "onPause() called")
+     }
+
+     override fun onStop() {
+         super.onStop()
+         Log.d(TAG, "onStop() called")
+     }
+
+     override fun onDestroy() {
+         super.onDestroy()
+         Log.d(TAG,"onDestroy called")
+     }
+ */
 }
