@@ -15,8 +15,6 @@ class CheatActivity : AppCompatActivity() {
         private val EXTRA_ANSWER_IS_TRUE="com.bignerdranch.android.bignerdandroid.contoller.answer_is_true"
         private val KEY_SHOW="cheat"
         private val EXTRA_ANSWER_SHOWN="com.bignerdranch.android.bignerdandroid.contoller.answer_shown"
-        private var trampa:Boolean = false
-
 
         //este metodo sera usado por cualquier actividad que quiera pasar a CheatActivity
         fun newIntent(packageContext:Context, answerIsTrue:Boolean): Intent {
@@ -37,8 +35,8 @@ class CheatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cheat)
 
-        if (savedInstanceState != null) trampa=savedInstanceState.getBoolean(KEY_SHOW)
-        trampa_text.setText(trampa.toString())
+        if (savedInstanceState != null) setAnswerShownResult(true)
+        //trampa_text.setText(trampa.toString())
 
         //recuperamos el valor del intent
         mAnswerIsTrue=intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE,false)
@@ -54,14 +52,12 @@ class CheatActivity : AppCompatActivity() {
     private fun setAnswerShownResult(isAnswerShown:Boolean){
         //enviamos datos al activity que llamo a CheatActivity(padre)
         var data= Intent()
-        trampa=isAnswerShown
-        data.putExtra(EXTRA_ANSWER_SHOWN, trampa)
+        data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown)
         setResult(Activity.RESULT_OK,data)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putBoolean(KEY_SHOW, trampa)
+    override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+        super.onSaveInstanceState(savedInstanceState)
     }
 
 }

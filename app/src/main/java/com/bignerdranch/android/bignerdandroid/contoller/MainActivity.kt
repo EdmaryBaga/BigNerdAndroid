@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         private val KEY_INDEX="index"
-        private val KEY_Cheater="index"
+        private val KEY_Cheater="tramposo"
         val TAG="Life"
         var  answer_is_true:Boolean = false
         private val REQUEST_CODE_CHEAT=0
