@@ -51,6 +51,13 @@
                 android:src="@drawable/arrow_left"
                 android:padding="4dp" />
 
+        <Button
+                android:id="@+id/cheat_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="@string/cheat_button"/>
+
         <ImageButton
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
@@ -62,6 +69,7 @@
 
 
     </LinearLayout>
+
 
 
 </FrameLayout>
