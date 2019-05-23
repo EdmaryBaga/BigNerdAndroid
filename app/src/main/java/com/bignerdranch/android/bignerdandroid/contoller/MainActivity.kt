@@ -1,5 +1,7 @@
 package com.bignerdranch.android.bignerdandroid.contoller
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,15 +20,18 @@ class MainActivity : AppCompatActivity() {
         Question(R.string.question_americas, true),
         Question(R.string.question_asia, true)
     )
+    
 
     //para viable staticas
 
     companion object{
         private val KEY_INDEX="index"
+        val TAG="Life"
+        var  answer_is_true:Boolean = false
+        private val REQUEST_CODE_CHEAT=0
     }
 
-    val TAG="Life"
-
+    private var mIsCheater:Boolean = false
     var mCurrentIndex:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +40,6 @@ class MainActivity : AppCompatActivity() {
 
 
         //Log.d(TAG, "Estoy en onCreate")
-
         /*Se infla el xml y se crea el objeto View el layout*/
         setContentView(R.layout.activity_main)
 
@@ -52,20 +56,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         //creamos un array de objetos Question
-
         btn_next.setOnClickListener {
             mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
+            mIsCheater = false
            updateQuestion()
             habilitarBotones()
         }
         updateQuestion()
+
+        cheat_button.setOnClickListener {
+
+            var answerIsTrue:Boolean=mQuestionBank[mCurrentIndex].mAnswerTrue
+
+            //se crea el intent usando el metodo de CheatActivity
+            var intent: Intent =CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            //startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE_CHEAT)
+        }
 
         btn_prev.setOnClickListener {
             mCurrentIndex=(mCurrentIndex -1) % mQuestionBank.size
             updateQuestion()
             habilitarBotones()
         }
-
 
         //**KOTLIN**
         //implementamos un listener para nuestro boton true
@@ -80,6 +93,18 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+
+    //Se sobre escribe el metodo
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode!=Activity.RESULT_OK) return
+        if (requestCode== REQUEST_CODE_CHEAT){
+            if (data==null) return
+            mIsCheater=CheatActivity.wasAnswerShown(data)
+        }
+    }
+
 
    /* override fun onStart() {
         super.onStart()
@@ -127,7 +152,6 @@ class MainActivity : AppCompatActivity() {
        } catch (t: Throwable ) {
            // Log a message at "error" log level, along with an exception stack trace
            Log.e(TAG, "Index was out of bounds", t)}
-
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle?) {
@@ -135,25 +159,29 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG,  "onSaveInstanceState")
         //guardamos este dato para la persistencia
         savedInstanceState?.putInt(KEY_INDEX,mCurrentIndex)
-
     }
 
 
 
     //verificar la respuesta
     private fun checkAnswer(userPressedTrue:Boolean){
-        var answerIsTrue= mQuestionBank[mCurrentIndex].mAnswerTrue
-
+        answer_is_true= mQuestionBank[mCurrentIndex].mAnswerTrue
         var messageResId=0
+
         //inhabilitamos el boton para que no ingrese mas de una respuesta
         inhabilitaBoton(userPressedTrue)
 
-        if (userPressedTrue == answerIsTrue){
-            messageResId = R.string.correct_toast
-        }
+        if (mIsCheater) messageResId = R.string.judgment_toast;
         else{
-            messageResId=R.string.incorrect_toast
+
+            if (userPressedTrue == answer_is_true){
+                messageResId = R.string.correct_toast
+            }
+            else{
+                messageResId=R.string.incorrect_toast
+            }
         }
+
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
 
     }
