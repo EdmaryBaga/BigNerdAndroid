@@ -47,6 +47,7 @@ class CheatActivity : AppCompatActivity() {
         mAnswerIsTrue=intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE,false)
 
         //hacemos que nos muestre la soluion
+        version_sdk_build.setText("la version sdk de mi celular es (API Level) ${Build.VERSION.SDK_INT}")
         show_answer_button.setOnClickListener {
             if (mAnswerIsTrue) answer_text_view.setText(R.string.btn_true)
             else answer_text_view.setText(R.string.btn_false)
@@ -64,7 +65,6 @@ class CheatActivity : AppCompatActivity() {
                 }
         })
             anim.start()
-         version_sdk_build.setText("la version sdk de mi celular es ${Build.VERSION.SDK_INT}")
         }
     }
 

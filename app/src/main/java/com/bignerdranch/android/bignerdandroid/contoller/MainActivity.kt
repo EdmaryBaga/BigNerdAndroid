@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     companion object{
         private val KEY_INDEX="index"
         private val KEY_Cheater="tramposo"
+        private val KEY_TRAMPASHECHAS="trampasH"
         private val KEY_CORRECTAS="respuetasCorrectas"
         val TAG="Life"
         var  answer_is_true:Boolean = false
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var mIsCheater:Boolean = false
     var mCurrentIndex:Int = 0
     var  respuestasOk:Double = 0.0
+    var trampasHechas:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         /*el onCreate se llama para instanciar el activity*/
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0)
             respuestasOk=savedInstanceState.getDouble(KEY_CORRECTAS)
             mIsCheater=savedInstanceState.getBoolean(KEY_Cheater)
+            trampasHechas=savedInstanceState.getInt(KEY_TRAMPASHECHAS)
         }
 
         /*Setemos el widged con su id, debemos importar este xml para poder hacer referencia a sus elementos por el id*/
@@ -85,12 +88,19 @@ class MainActivity : AppCompatActivity() {
 
         cheat_button.setOnClickListener {
 
-            val answerIsTrue:Boolean=mQuestionBank[mCurrentIndex].mAnswerTrue
+            if (trampasHechas==3){
+                Toast.makeText(this,"Ya no puedes hacer trampa", Toast.LENGTH_LONG).show()
+                cheat_button.isEnabled=false
+            }
+            else {
+                val answerIsTrue:Boolean=mQuestionBank[mCurrentIndex].mAnswerTrue
+                trampasHechas++
 
-            //se crea el intent usando el metodo de CheatActivity
-            val intent: Intent =CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            //startActivity(intent)
-            startActivityForResult(intent, REQUEST_CODE_CHEAT)
+                //se crea el intent usando el metodo de CheatActivity
+                val intent: Intent =CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+                //startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE_CHEAT)
+            }
         }
 
         btn_prev.setOnClickListener {
@@ -165,6 +175,7 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState?.putInt(KEY_INDEX,mCurrentIndex)
         savedInstanceState?.putDouble(KEY_CORRECTAS,respuestasOk)
         savedInstanceState?.putBoolean(KEY_Cheater,mIsCheater)
+        savedInstanceState?.putInt(KEY_TRAMPASHECHAS,trampasHechas)
     }
 
 
