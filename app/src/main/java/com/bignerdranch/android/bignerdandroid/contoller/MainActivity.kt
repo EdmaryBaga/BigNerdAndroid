@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     companion object{
         private val KEY_INDEX="index"
         private val KEY_Cheater="tramposo"
+        private val KEY_CORRECTAS="respuetasCorrectas"
         val TAG="Life"
         var  answer_is_true:Boolean = false
         private val REQUEST_CODE_CHEAT=0
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private var mIsCheater:Boolean = false
     var mCurrentIndex:Int = 0
+    var  respuestasOk:Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         /*el onCreate se llama para instanciar el activity*/
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         /*Actualizamos el valor de mCurrentIndex, para la persistencia de datos*/
         if (savedInstanceState!=null){
             mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0)
+            respuestasOk=savedInstanceState.getDouble(KEY_CORRECTAS)
             mIsCheater=savedInstanceState.getBoolean(KEY_Cheater)
         }
 
@@ -61,10 +64,18 @@ class MainActivity : AppCompatActivity() {
 
         //creamos un array de objetos Question
         btn_next.setOnClickListener {
+
+            if (mCurrentIndex==5){
+                //calcular el promedio
+                calcularPromedio()
+                Toast.makeText(this@MainActivity,"Tu puntaje porcentual es ${calcularPromedio()}%", Toast.LENGTH_SHORT).show()
+            }else{
+
             mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
             mIsCheater = false
            updateQuestion()
             habilitarBotones()
+            }
         }
         updateQuestion()
 
@@ -109,6 +120,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun calcularPromedio() :Double{
+        return (respuestasOk*100)/6
+    }
+
     fun habilitarBotones(){
         btn_false.isEnabled=true
         btn_true.isEnabled=true
@@ -136,6 +151,7 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG,  "onSaveInstanceState")
         //guardamos este dato para la persistencia
         savedInstanceState?.putInt(KEY_INDEX,mCurrentIndex)
+        savedInstanceState?.putDouble(KEY_CORRECTAS,respuestasOk)
         savedInstanceState?.putBoolean(KEY_Cheater,mIsCheater)
     }
 
@@ -153,6 +169,7 @@ class MainActivity : AppCompatActivity() {
         else{
 
             if (userPressedTrue == answer_is_true){
+                respuestasOk++
                 messageResId = R.string.correct_toast
             }
             else{
