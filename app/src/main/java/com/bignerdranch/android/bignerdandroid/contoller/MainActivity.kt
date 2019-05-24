@@ -1,15 +1,19 @@
 package com.bignerdranch.android.bignerdandroid.contoller
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.bignerdranch.android.bignerdandroid.R
 import com.bignerdranch.android.bignerdandroid.model.Question
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toast_view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,13 +69,13 @@ class MainActivity : AppCompatActivity() {
         //creamos un array de objetos Question
         btn_next.setOnClickListener {
 
-            if (mCurrentIndex==5){
+            if (mCurrentIndex==mQuestionBank.size-1){
                 //calcular el promedio
                 calcularPromedio()
                 Toast.makeText(this@MainActivity,"Tu puntaje porcentual es ${calcularPromedio()}%", Toast.LENGTH_SHORT).show()
             }else{
-
-            mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
+            //mCurrentIndex=(mCurrentIndex + 1) % mQuestionBank.size
+                mCurrentIndex++
             mIsCheater = false
            updateQuestion()
             habilitarBotones()
@@ -90,9 +94,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_prev.setOnClickListener {
-            mCurrentIndex=(mCurrentIndex -1) % mQuestionBank.size
-            updateQuestion()
-            habilitarBotones()
+            //mCurrentIndex=(mCurrentIndex -1) % mQuestionBank.size
+                mCurrentIndex--
+                updateQuestion()
+                habilitarBotones()
         }
 
         //**KOTLIN**
@@ -120,8 +125,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun calcularPromedio() :Double{
-        return (respuestasOk*100)/6
+    private fun calcularPromedio() :Int{
+        return ((respuestasOk*100)/6).toInt()
     }
 
     fun habilitarBotones(){
@@ -136,16 +141,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateQuestion(){
+    private fun updateQuestion() {
 
-       try {
-           val question=  mQuestionBank[mCurrentIndex].mTextResId
-           question_text_view.setText(question)
-       } catch (t: Throwable ) {
-           // Log a message at "error" log level, along with an exception stack trace
-           Log.e(TAG, "Index was out of bounds", t)}
+
+        try {
+            val question = mQuestionBank[mCurrentIndex].mTextResId
+            question_text_view.setText(question)
+        }catch (exception: ArrayIndexOutOfBoundsException ){
+            var toastEx=Toast(applicationContext)
+            var inflater=layoutInflater
+            var layaut: View = inflater.inflate(R.layout.toast_view, findViewById(R.id.lytLayout))
+            var txt:TextView=layaut.findViewById(R.id.txtMensaje)
+            txt.text="Ya no hay mas preguntas provias"
+            toastEx.duration=Toast.LENGTH_LONG
+            toastEx.view=layaut
+            toastEx.show()
+        }
     }
-
     override fun onSaveInstanceState(savedInstanceState: Bundle?) {
         super.onSaveInstanceState(savedInstanceState)
         Log.i(TAG,  "onSaveInstanceState")
@@ -158,6 +170,7 @@ class MainActivity : AppCompatActivity() {
 
 
     //verificar la respuesta
+    @SuppressLint("ResourceAsColor")
     private fun checkAnswer(userPressedTrue:Boolean){
         answer_is_true= mQuestionBank[mCurrentIndex].mAnswerTrue
         var messageResId: Int
@@ -176,8 +189,10 @@ class MainActivity : AppCompatActivity() {
                 messageResId=R.string.incorrect_toast
             }
         }
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-
+       val myToast= Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+        myToast.setGravity(Gravity.TOP,0,150)
+        myToast.view.setBackgroundColor(R.color.material_blue_grey_800)
+        myToast.show()
     }
 
 
