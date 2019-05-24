@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         /*Setemos el widged con su id, debemos importar este xml para poder hacer referencia a sus elementos por el id*/
-        question_text_view.text="Esta debe ser una pregunta"
+       // question_text_view.text="Esta debe ser una pregunta"
 
         //agregamos un escuchador al text_view
         question_text_view.setOnClickListener { v:View->
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
             var inflater=layoutInflater
             var layaut: View = inflater.inflate(R.layout.toast_view, findViewById(R.id.lytLayout))
             var txt:TextView=layaut.findViewById(R.id.txtMensaje)
-            txt.text="Ya no hay mas preguntas provias"
+            txt.text="Ya no hay mas preguntas provias \n causa ${exception.cause} \n  mensaje ${exception.message}"
             toastEx.duration=Toast.LENGTH_LONG
             toastEx.view=layaut
             toastEx.show()

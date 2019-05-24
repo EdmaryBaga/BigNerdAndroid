@@ -1,11 +1,15 @@
 package com.bignerdranch.android.bignerdandroid.contoller
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.View
+import android.view.ViewAnimationUtils
 import com.bignerdranch.android.bignerdandroid.R
 import kotlinx.android.synthetic.main.activity_cheat.*
 
@@ -46,6 +50,21 @@ class CheatActivity : AppCompatActivity() {
             if (mAnswerIsTrue) answer_text_view.setText(R.string.btn_true)
             else answer_text_view.setText(R.string.btn_false)
             setAnswerShownResult(true)
+
+            //creamos una animacion circular al dar click al boton
+            var cx=show_answer_button.width/2
+            var cy=show_answer_button.height/2
+            var radius :Float= show_answer_button.width.toFloat()
+            var anim: Animator = ViewAnimationUtils.createCircularReveal(show_answer_button,cx,cy,radius,0f)
+            anim.addListener(object : AnimatorListenerAdapter(){
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    show_answer_button.visibility=View.INVISIBLE
+                }
+        })
+            anim.start()
+
+
         }
     }
 
