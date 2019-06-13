@@ -152,8 +152,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-
-
         try {
             val question = mQuestionBank[mCurrentIndex].mTextResId
             question_text_view.setText(question)
@@ -225,7 +223,7 @@ class MainActivity : AppCompatActivity() {
      override fun onStop() {
          super.onStop()
          Log.d(TAG, "onStop() called")
-     }
+     }git
 
      override fun onDestroy() {
          super.onDestroy()
